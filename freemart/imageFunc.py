@@ -1,5 +1,4 @@
 # Importing 3rd party components
-from flask import current_app
 from flask_login import current_user
 
 import requests
@@ -20,7 +19,7 @@ import os
 # Defining jobs object
 jobs = Queue()
 
-g = Github(auth=Auth.Token(current_app.config['GITHUB_TOKEN']))
+g = Github(auth=Auth.Token(os.environ.get('GITHUB_TOKEN')))
 g_user = g.get_user()
 img_repo = g_user.get_repo('freemart_img')
 
