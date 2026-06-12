@@ -1,9 +1,10 @@
 # Importing 3rd party components
+from flask import current_app
 from flask_login import current_user
 
 import requests
 
-from github import Github
+from github import Github, Auth
 
 from PIL import Image, ImageOps
 
@@ -18,6 +19,10 @@ import os
 
 # Defining jobs object
 jobs = Queue()
+
+g = Github(auth=Auth.Token(current_app.config['GITHUB_TOKEN']))
+g_user = g.get_user()
+img_repo = g_user.get_repo('freemart_img')
 
 
 def loadImgs(items):
@@ -38,16 +43,15 @@ def saveImg(productImage, imageFilename) -> bool:
         Attempt save img to repo, inform of outcome
     '''
 
-    g = Github(os.environ.get("GITT"))
     img = Image.open(productImage)
     img = ImageOps.exif_transpose(img)
     img = img.resize((500, 500))
     img_byte_arr = BytesIO()
     img.save(img_byte_arr, format='PNG')
     img_byte_arr = img_byte_arr.getvalue()
-    for repo in g.get_user().get_repos():
-        if repo.name == "freemart_img":
-            repo.create_file(imageFilename, f"{current_user.username}'s uplaod", bytes(img_byte_arr), "main")
+
+    if img_repo:
+            img_repo.create_file(imageFilename, f"{current_user.username}'s uplaod", bytes(img_byte_arr), "main")
             return True
     return False
 
@@ -59,9 +63,10 @@ def loadImg(q):
 
     while not q.empty():
         imageFilename = q.get()
-        url = f'https://raw.githubusercontent.com/uio23/freemart_img/main/{imageFilename}'
-        resp = requests.get(url)
-        i = Image.open(BytesIO(resp.content))
+        resp = img_repo.get_contents(imageFilename).decoded_content
+        #url = f'https://raw.githubusercontent.com/uio23/freemart_img/main/{imageFilename}'
+        #resp = requests.get(url)
+        i = Image.open(BytesIO(resp))
         i.save(os.path.join(os.path.join(
             os.path.dirname(
                 os.path.abspath(__file__)

@@ -14,11 +14,11 @@ def calcSaleBonus(user: User) -> int:
         items = Product.query.filter(Product.listed==True, Product.username != user.username).all()
 
         # If there is nothing selling, calculate the avg price from all products
+        prices = [item.price for item in items]
         if not items:
             items = Product.query.filter(Product.username != user.username).all()
             if not items:
                 prices = [0]
-        prices = [item.price for item in items]
         priceAvg = stats.mean(removeOutliers(prices))
         saleBonus = int((priceAvg/3))
     return saleBonus

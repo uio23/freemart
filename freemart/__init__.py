@@ -15,7 +15,7 @@ login_manager = LoginManager()
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = os.environ.get('MONKEY')
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
     app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME")
     app.config['MAIL_SERVER']='smtp.gmail.com'
@@ -24,6 +24,7 @@ def create_app():
     app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
     app.config['MAIL_USE_TLS'] = False
     app.config['MAIL_USE_SSL'] = True
+    app.config['GITHUB_TOKEN'] = os.environ.get('GITHUB_TOKEN')
 
     from .auth import auth
     from .market import market

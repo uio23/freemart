@@ -1,5 +1,5 @@
 # Importing 3rd party components
-from flask import url_for, redirect, render_template, flash
+from flask import url_for, redirect, render_template, flash, current_app
 from flask_login import current_user
 from flask_mail import Message
 
@@ -61,8 +61,8 @@ def generateToken(email: str) -> str:
         Encode given email into a secure token
     '''
 
-    serializer = URLSafeTimedSerializer(os.environ.get('MONKEY'))
-    token = serializer.dumps(email, salt=os.environ.get('MONKEY_PASS'))
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    token = serializer.dumps(email, salt=current_app.config['SECRET_KEY'])
     return token
 
 
@@ -71,9 +71,9 @@ def deleteAccount(token: str, expiration=3600):
         Delete account given email in token format.
     '''
 
-    serializer = URLSafeTimedSerializer(os.environ.get('MONKEY'))
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
-        email = serializer.loads(token, salt=os.environ.get('MONKEY_PASS'), max_age=expiration)
+        email = serializer.loads(token, salt=current_app.config['SECRET_KEY'], max_age=expiration)
     except:
         return "Invalid url"
     user = User.query.filter_by(email=email).first()
@@ -90,9 +90,9 @@ def validateToken(token: str, expiration=3600) -> bool:
         Confirm if given token de-codes to current user's email
     '''
 
-    serializer = URLSafeTimedSerializer(os.environ.get('MONKEY'))
+    serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
     try:
-        email = serializer.loads(token, salt=os.environ.get('MONKEY_PASS'), max_age=expiration)
+        email = serializer.loads(token, salt=current_app.config['SECRET_KEY'], max_age=expiration)
     except:
         return False
     user = User.query.filter_by(email=current_user.email).first()
@@ -110,7 +110,7 @@ def sendConfirmationEmail(user: User) -> None:
     url = url_for("auth.confirm_hollow_page", token=token, _external=True)
     deleteUrl = url_for("auth.delete_hollow_page", token=token, _external=True)
     contentHtml = render_template("auth/confirmationEmail.html", username=user.username, url=url, deleteUrl=deleteUrl)
-    msg = Message(sender=os.environ.get("MAIL_DEFAULT_SENDER"), recipients=[user.email], subject="Activate Your Free Mart Account", html=contentHtml)
+    msg = Message(sender=current_app.config["MAIL_DEFAULT_SENDER"], recipients=[user.email], subject="Activate Your Free Mart Account", html=contentHtml)
     mail.send(msg)
 
 

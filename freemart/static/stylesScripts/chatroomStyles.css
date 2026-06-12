@@ -1,76 +1,53 @@
-span {
-  color: blue;
+.messages-container {
+  margin: 0 auto;
+  background-color: #606d5d;
+  border-radius: 15px;
+  width: 95%;
+  padding: 1rem;
 }
 
+.messages {
+  max-height: 50vh;
+  overflow: scroll;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-p {
+.messages::-webkit-scrollbar {
+  display: none;
+}
+
+.message {
   width: fit-content;
-  padding: 5px;
-  padding-left: 8px;
-  padding-right: 8px;
-  color:  #000000;
-  background-color: #c0d8d0;
-  border: 1px solid #c0d8d0;
+  padding: 5px 10px;
+  background-color: #d0d6cf;
   border-radius: 20px;
 }
 
-
-.chat-window-container {
-  height: 60vh;
-  width: 80%;
-  position: relative;
-  margin: 0 auto;
-  margin-top: 5vh;
+.username {
+  color: #6874e8;
 }
 
-
-.chatInput {
-  width: 60%;
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  top: 80%;
-  left: 0;
-  right: 0;
-}
-
-
-.specialInput {
-  border-color: #86b7fe;
-}
-
-
-.specialInput:hover {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-
-.specialButton {
+.message-input-feild {
   border-right: none;
 }
 
 
-#messages {
-  max-height: 80%;
-  width: 90%;
-  position: absolute;
-  bottom: 30px;
-  left: 40px;
-  overflow: auto;
+@media only screen and (min-width: 992px) {
+  .messages-container {
+    width: 85%;
+  }
+  .message-input {
+    width: 66%;
+  }
 }
 
-
-.messages-container {
-  position: absolute;
-  width: 80%;
-
-  margin-left: auto;
-  margin-right: auto;
-  height: 75%;
-  left: 0;
-  right: 0;
-  background-color: #3C6255;
-  border-radius: 15px;
-  text-align: left;
+@media only screen and (min-width: 1200px) {
+  .messages-container {
+    width: 75%;
+  }
+  .message-input {
+    width: 60%;
+  }
 }
